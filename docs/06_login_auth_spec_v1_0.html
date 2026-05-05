@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>06_ログイン・認証仕様書_v1.0</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;--paper:#fff;--ink:#1f2937;--muted:#64748b;--line:#d9dee8;
+      --primary:#2563eb;--primary-soft:#e8f0ff;--green:#059669;--green-soft:#e8f8f1;
+      --orange:#d97706;--orange-soft:#fff4df;--red:#dc2626;--red-soft:#fee2e2;
+      --purple:#7c3aed;--purple-soft:#f0e8ff;--shadow:0 12px 30px rgba(31,41,55,.08);--radius:18px;
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--ink);background:linear-gradient(180deg,#edf3ff 0%,var(--bg) 320px);line-height:1.7}
+    .layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:24px;max-width:1420px;margin:0 auto;padding:24px}
+    aside{position:sticky;top:24px;align-self:start;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    aside h2{font-size:14px;margin:0 0 12px;color:var(--muted);letter-spacing:.08em}aside a{display:block;text-decoration:none;color:var(--ink);padding:9px 10px;border-radius:10px;font-size:14px}aside a:hover{background:var(--primary-soft);color:var(--primary)}
+    main{min-width:0}.hero{background:linear-gradient(135deg,#fff 0%,#f4f7ff 100%);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);padding:32px;margin-bottom:24px}.hero h1{font-size:clamp(28px,4vw,42px);line-height:1.18;margin:8px 0 14px;letter-spacing:-.03em}.subtitle{color:var(--muted);font-size:16px;max-width:900px}.meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:6px 10px;border-radius:999px;font-size:13px;white-space:nowrap}.pill.primary{background:var(--primary-soft);color:var(--primary);border-color:#bad0ff}.pill.green{background:var(--green-soft);color:var(--green);border-color:#b7ead5}.pill.orange{background:var(--orange-soft);color:var(--orange);border-color:#ffdca1}.pill.purple{background:var(--purple-soft);color:var(--purple);border-color:#dcc8ff}.pill.red{background:var(--red-soft);color:var(--red);border-color:#fecaca}
+    section{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:22px}h2{font-size:24px;margin:0 0 16px;letter-spacing:-.02em}h3{font-size:18px;margin:22px 0 10px}p{margin:8px 0}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-6{grid-column:span 6}.span-8{grid-column:span 8}.span-12{grid-column:span 12}.callout{border-left:5px solid var(--primary);background:var(--primary-soft);border-radius:14px;padding:14px 16px;margin:14px 0}.callout.orange{border-left-color:var(--orange);background:var(--orange-soft)}.callout.green{border-left-color:var(--green);background:var(--green-soft)}.callout.red{border-left-color:var(--red);background:var(--red-soft)}
+    table{width:100%;border-collapse:collapse;margin-top:12px;background:#fff;border-radius:14px;overflow:hidden}th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;font-size:14px}th{background:#f8fafc;font-weight:800}.small{font-size:12px;color:var(--muted);font-weight:700}.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:1px 5px;color:#475569}
+    .flow{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;margin-top:14px}.flow-step{flex:1 1 170px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;min-height:108px;position:relative}.flow-step:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:38%;color:var(--primary);font-weight:800;background:#fff;border:1px solid var(--line);border-radius:999px;width:28px;height:28px;text-align:center;line-height:25px;z-index:2}.step-id{display:inline-block;font-weight:800;color:var(--primary);background:var(--primary-soft);border-radius:999px;padding:2px 8px;font-size:12px;margin-bottom:8px}
+    .wireframes{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:18px;align-items:start}.wireframes.two{grid-template-columns:repeat(2,minmax(280px,1fr))}.phone{width:100%;max-width:360px;margin:0 auto;background:#111827;border-radius:32px;padding:11px;box-shadow:0 18px 34px rgba(17,24,39,.18)}.screen{background:#f9fafb;border-radius:24px;min-height:640px;padding:18px;overflow:hidden}.screen.short{min-height:560px}.topbar{min-height:34px;display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:14px;margin-bottom:12px}.top-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.actions{display:flex;gap:8px;align-items:center}.back{color:var(--primary);font-size:13px;font-weight:900}.save-link{color:var(--primary);font-size:13px;font-weight:900}.auth-logo{width:64px;height:64px;border-radius:18px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;margin:28px auto 14px;color:var(--primary);font-weight:900;font-size:24px}.center{text-align:center}.auth-title{font-size:20px;font-weight:900;margin:4px 0}.auth-sub{font-size:12px;color:#64748b;font-weight:700;margin-bottom:18px}.form-block{margin-bottom:12px}.label{font-size:12px;font-weight:900;color:#475569;margin-bottom:5px}.field{width:100%;min-height:44px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:#111827}.field.placeholder{color:#94a3b8}.primary-button,.ghost-button,.danger-button{border-radius:14px;min-height:42px;padding:9px 12px;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;text-align:center;margin-top:10px}.primary-button{background:var(--primary);color:#fff}.ghost-button{background:#fff;color:var(--ink);border:1px solid var(--line)}.danger-button{background:var(--red);color:#fff}.link-row{display:flex;justify-content:center;gap:12px;align-items:center;margin-top:12px;font-size:12px;font-weight:900;color:var(--primary)}.divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:#94a3b8;font-size:11px;font-weight:900}.divider:before,.divider:after{content:"";height:1px;background:#e2e8f0;flex:1}.social-btn{height:42px;background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:900;margin-bottom:8px}.notice{border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:14px;padding:10px;font-size:11px;font-weight:800;margin:10px 0}.warning{border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;border-radius:14px;padding:10px;font-size:11px;font-weight:800;margin:10px 0}.error{border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:14px;padding:10px;font-size:11px;font-weight:800;margin:10px 0}.menu-list{display:grid;gap:10px}.menu-row{min-height:64px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:center;box-shadow:0 4px 10px rgba(31,41,55,.03)}.menu-icon{width:38px;height:38px;border-radius:12px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:900}.menu-title{font-size:13px;font-weight:900}.menu-desc{font-size:10px;color:#64748b;font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chev{color:#94a3b8;font-weight:900}.list-row{min-height:48px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.row-title{font-size:13px;font-weight:900}.row-sub{font-size:10px;color:#64748b;font-weight:700;margin-top:1px}.tag{display:inline-flex;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;line-height:1}.tag.green{color:var(--green);background:var(--green-soft);border-color:#b7ead5}.tag.red{color:var(--red);background:var(--red-soft);border-color:#fecaca}.tag.gray{color:#64748b;background:#f8fafc;border-color:#e2e8f0}.ref-list{font-size:13px;color:#475569}.ref-list li{margin-bottom:6px}
+    @media(max-width:1050px){.layout{grid-template-columns:1fr}aside{position:static}.wireframes,.wireframes.two{grid-template-columns:repeat(2,minmax(280px,1fr))}.span-3,.span-4,.span-6,.span-8{grid-column:span 12}}
+    @media(max-width:720px){.layout{padding:14px}.hero,section{padding:18px}.wireframes,.wireframes.two{grid-template-columns:1fr}.flow-step:not(:last-child)::after{display:none}.screen{min-height:620px}.phone{max-width:350px}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <h2>目次</h2>
+    <a href="#overview">1. 概要</a>
+    <a href="#policy">2. 基本方針</a>
+    <a href="#scope">3. スコープ</a>
+    <a href="#screens">4. 画面一覧</a>
+    <a href="#wireframes">5. 画面イメージ</a>
+    <a href="#flow">6. 認証フロー</a>
+    <a href="#account-model">7. アカウントモデル</a>
+    <a href="#security">8. セキュリティ要件</a>
+    <a href="#deletion">9. アカウント削除</a>
+    <a href="#implementation">10. 実装方針</a>
+    <a href="#specids">11. 仕様ID</a>
+    <a href="#todo">12. TBD</a>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="pill primary">06 / Draft</div>
+      <h1>ログイン・認証仕様書</h1>
+      <p class="subtitle">検索アプリのデータをユーザー単位で保護し、将来の家族共有・複数端末同期に拡張しやすいログイン/認証機能を定義する。</p>
+      <div class="meta-row">
+        <span class="pill primary">MVP：メール/パスワード</span>
+        <span class="pill green">認証基盤利用前提</span>
+        <span class="pill orange">アカウント削除対応</span>
+        <span class="pill purple">将来：SNS/家族共有</span>
+      </div>
+    </div>
+
+    <section id="overview">
+      <h2>1. 概要</h2>
+      <p>本仕様書では、ログイン、新規登録、パスワード再設定、ログアウト、アカウント設定、アカウント削除を定義する。</p>
+      <div class="callout">
+        <strong>結論：</strong>独自認証を作り込まず、Firebase Authentication / Supabase Auth / Auth0 / Cognito 等の認証基盤を利用する前提で仕様化する。アプリ側は画面・状態遷移・権限・データ所有ルールに集中する。
+      </div>
+      <div class="grid">
+        <div class="card span-4"><strong>目的</strong><br>家の中のモノ情報を、ユーザーアカウント単位で安全に扱う。</div>
+        <div class="card span-4"><strong>日常動作</strong><br>ログイン済みなら自動で検索/アイテム一覧へ進む。</div>
+        <div class="card span-4"><strong>将来拡張</strong><br>家族共有、複数端末同期、SNSログイン、MFAに拡張可能にする。</div>
+      </div>
+    </section>
+
+    <section id="policy">
+      <h2>2. 基本方針</h2>
+      <table>
+        <thead><tr><th>項目</th><th>方針</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>ログイン有無</td><td>ログイン必須</td><td>部屋・収納・アイテムなどの個人/家庭データを保護するため。</td></tr>
+          <tr><td>認証方式</td><td>MVPはメールアドレス + パスワード</td><td>最も汎用的で、外部IDプロバイダに依存しない。</td></tr>
+          <tr><td>SNSログイン</td><td>Phase 2</td><td>利便性は高いが、ストア審査・ブランドルール・実装分岐が増えるため。</td></tr>
+          <tr><td>MFA</td><td>Phase 2 / 任意</td><td>家庭内データの保護強化として有効だが、MVPでは登録負荷を抑える。</td></tr>
+          <tr><td>認証状態</td><td>起動時に判定し、ログイン済みならS01へ</td><td>毎回ログインさせず、日常利用をスムーズにする。</td></tr>
+          <tr><td>設定画面</td><td>M01 管理/設定からアカウント設定へ</td><td>ログアウト、退会、メール確認などを管理系に集約する。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="scope">
+      <h2>3. スコープ</h2>
+      <div class="grid">
+        <div class="card span-6">
+          <h3>MVPで作る</h3>
+          <ul>
+            <li>ログイン</li>
+            <li>新規登録</li>
+            <li>パスワード再設定</li>
+            <li>ログアウト</li>
+            <li>アカウント設定</li>
+            <li>アカウント削除</li>
+            <li>起動時の認証状態判定</li>
+          </ul>
+        </div>
+        <div class="card span-6">
+          <h3>Phase 2候補</h3>
+          <ul>
+            <li>Googleログイン</li>
+            <li>Appleログイン</li>
+            <li>生体認証による再ロック解除</li>
+            <li>MFA</li>
+            <li>家族招待/世帯共有</li>
+            <li>端末一覧/セッション管理</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout orange">
+        <strong>注意：</strong>SNSログインを入れる場合は、各プラットフォームのボタン表示ルール、ストア審査、プライバシー開示を別途確認する。
+      </div>
+    </section>
+
+    <section id="screens">
+      <h2>4. 画面一覧</h2>
+      <table>
+        <thead><tr><th>画面ID</th><th>画面名</th><th>役割</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td>A00</td><td>起動/認証判定</td><td>ログイン状態を確認し、S01またはA01へ振り分ける</td><td>画面としてはローディング相当</td></tr>
+          <tr><td>A01</td><td>ログイン画面</td><td>メール/パスワードでログインする</td><td>新規登録、再設定への導線あり</td></tr>
+          <tr><td>A02</td><td>新規登録画面</td><td>アカウントを作成する</td><td>登録後、初期ホームデータを作成</td></tr>
+          <tr><td>A03</td><td>パスワード再設定画面</td><td>再設定メールを送信する</td><td>メールアドレス入力のみ</td></tr>
+          <tr><td>A04</td><td>メール確認案内</td><td>メール未確認時の案内を表示する</td><td>バナー/管理画面内で表示</td></tr>
+          <tr><td>A05</td><td>アカウント設定画面</td><td>ログアウト、退会、メール確認状態を確認する</td><td>M01 管理/設定から遷移</td></tr>
+          <tr><td>A06</td><td>アカウント削除確認画面</td><td>退会前の確認と再認証を行う</td><td>削除は重大操作</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="wireframes">
+      <h2>5. 画面イメージ</h2>
+      <div class="wireframes">
+        <div class="phone">
+          <div class="screen">
+            <div class="auth-logo">家</div>
+            <div class="center">
+              <div class="auth-title">ログイン</div>
+              <div class="auth-sub">登録したモノの所在を確認します</div>
+            </div>
+            <div class="form-block">
+              <div class="label">メールアドレス</div>
+              <div class="field placeholder">example@mail.com</div>
+            </div>
+            <div class="form-block">
+              <div class="label">パスワード</div>
+              <div class="field">•••••••••••• <span class="small">表示</span></div>
+            </div>
+            <div class="primary-button">ログイン</div>
+            <div class="link-row"><span>新規登録</span><span>パスワードを忘れた</span></div>
+            <div class="divider">Phase 2</div>
+            <div class="social-btn">G Googleで続ける</div>
+            <div class="social-btn"> Appleで続ける</div>
+            <div class="notice">MVPではSNSログインは非表示。将来拡張用の位置のみ定義。</div>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="screen">
+            <div class="topbar"><span class="back">戻る</span><span class="top-title">新規登録</span><span></span></div>
+            <div class="form-block">
+              <div class="label">メールアドレス</div>
+              <div class="field placeholder">example@mail.com</div>
+            </div>
+            <div class="form-block">
+              <div class="label">パスワード</div>
+              <div class="field">15文字以上を推奨</div>
+            </div>
+            <div class="form-block">
+              <div class="label">パスワード確認</div>
+              <div class="field placeholder">もう一度入力</div>
+            </div>
+            <div class="warning">パスワードは英大文字・数字・記号などの強制ルールを設けない。長く、推測されにくいものを推奨する。</div>
+            <div class="primary-button">登録する</div>
+            <div class="notice">登録後、初期データ領域を作成して検索/アイテム一覧へ進む。</div>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="screen">
+            <div class="topbar"><span class="back">戻る</span><span class="top-title">アカウント設定</span><span></span></div>
+            <div class="menu-list">
+              <div class="menu-row">
+                <div class="menu-icon">@</div>
+                <div><div class="menu-title">メールアドレス</div><div class="menu-desc">example@mail.com</div></div>
+                <span class="tag green">確認済み</span>
+              </div>
+              <div class="menu-row">
+                <div class="menu-icon">鍵</div>
+                <div><div class="menu-title">パスワード変更</div><div class="menu-desc">再設定メールを送信</div></div>
+                <div class="chev">›</div>
+              </div>
+              <div class="menu-row">
+                <div class="menu-icon">端</div>
+                <div><div class="menu-title">ログイン中の端末</div><div class="menu-desc">Phase 2：端末確認/解除</div></div>
+                <span class="tag gray">後続</span>
+              </div>
+            </div>
+            <div class="ghost-button">ログアウト</div>
+            <div class="danger-button">アカウント削除</div>
+          </div>
+        </div>
+      </div>
+      <h3>補助画面</h3>
+      <div class="wireframes two">
+        <div class="phone">
+          <div class="screen short">
+            <div class="topbar"><span class="back">戻る</span><span class="top-title">パスワード再設定</span><span></span></div>
+            <p class="small">登録済みのメールアドレスを入力すると、再設定用メールを送信します。</p>
+            <div class="form-block">
+              <div class="label">メールアドレス</div>
+              <div class="field placeholder">example@mail.com</div>
+            </div>
+            <div class="primary-button">再設定メールを送信</div>
+            <div class="notice">送信後は、メールが存在するかどうかを明示しない汎用メッセージにする。</div>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="screen short">
+            <div class="topbar"><span class="back">戻る</span><span class="top-title">アカウント削除</span><span></span></div>
+            <div class="error">アカウントと、このアカウントに紐づく部屋・収納・アイテム情報を削除します。この操作は取り消せません。</div>
+            <div class="form-block">
+              <div class="label">確認入力</div>
+              <div class="field placeholder">削除 と入力</div>
+            </div>
+            <div class="form-block">
+              <div class="label">再認証</div>
+              <div class="field placeholder">パスワードを入力</div>
+            </div>
+            <div class="danger-button">完全に削除する</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow">
+      <h2>6. 認証フロー</h2>
+      <h3>起動時</h3>
+      <div class="flow">
+        <div class="flow-step"><span class="step-id">A00</span><br><strong>認証状態確認</strong><br><span class="small">セッション/トークンを確認</span></div>
+        <div class="flow-step"><span class="step-id">分岐</span><br><strong>ログイン済み？</strong><br><span class="small">有効ならS01へ</span></div>
+        <div class="flow-step"><span class="step-id">S01</span><br><strong>検索/アイテム一覧</strong><br><span class="small">メイン画面</span></div>
+        <div class="flow-step"><span class="step-id">A01</span><br><strong>ログイン</strong><br><span class="small">未ログイン時のみ</span></div>
+      </div>
+      <h3>新規登録</h3>
+      <div class="flow">
+        <div class="flow-step"><span class="step-id">A02</span><br><strong>登録入力</strong><br><span class="small">メール/パスワード</span></div>
+        <div class="flow-step"><span class="step-id">Auth</span><br><strong>アカウント作成</strong><br><span class="small">認証基盤側</span></div>
+        <div class="flow-step"><span class="step-id">Data</span><br><strong>初期データ作成</strong><br><span class="small">profile / home を作成</span></div>
+        <div class="flow-step"><span class="step-id">S01</span><br><strong>メインへ</strong><br><span class="small">メール確認バナー表示可</span></div>
+      </div>
+      <h3>パスワード再設定</h3>
+      <div class="flow">
+        <div class="flow-step"><span class="step-id">A03</span><br><strong>メール入力</strong><br><span class="small">再設定メール送信</span></div>
+        <div class="flow-step"><span class="step-id">Mail</span><br><strong>リンク送信</strong><br><span class="small">認証基盤側</span></div>
+        <div class="flow-step"><span class="step-id">User</span><br><strong>新パスワード設定</strong><br><span class="small">外部/アプリ内リンク</span></div>
+        <div class="flow-step"><span class="step-id">A01</span><br><strong>再ログイン</strong><br><span class="small">必要に応じて</span></div>
+      </div>
+    </section>
+
+    <section id="account-model">
+      <h2>7. アカウントモデル</h2>
+      <div class="callout green">
+        <strong>設計方針：</strong>将来の家族共有に備え、認証ユーザーとデータの入れ物を分ける。MVPでは1ユーザーに初期ホームを1つ作る。
+      </div>
+      <table>
+        <thead><tr><th>データ</th><th>概要</th><th>MVP</th><th>将来拡張</th></tr></thead>
+        <tbody>
+          <tr><td>UserAuth</td><td>認証基盤が管理するユーザーID</td><td>必須</td><td>SNS/MFA追加</td></tr>
+          <tr><td>UserProfile</td><td>アプリ側プロフィール</td><td>メール、表示名、作成日時</td><td>アイコン、通知設定</td></tr>
+          <tr><td>HomeSpace</td><td>部屋/収納/アイテムの所属先</td><td>登録時に自動作成</td><td>家族共有、複数住まい</td></tr>
+          <tr><td>HomeMember</td><td>ユーザーとHomeSpaceの関係</td><td>ownerのみ</td><td>owner/editor/viewer</td></tr>
+        </tbody>
+      </table>
+      <p class="small">部屋、収納、エリア、アイテム、カテゴリ、人物ラベルは、原則として <span class="kbd">home_id</span> に紐づける。</p>
+    </section>
+
+    <section id="security">
+      <h2>8. セキュリティ要件</h2>
+      <table>
+        <thead><tr><th>分類</th><th>要件</th><th>仕様</th></tr></thead>
+        <tbody>
+          <tr><td>パスワード</td><td>長さ重視</td><td>MVPでは15文字以上を推奨。実装制約がある場合でも最低8文字以上。英大文字/数字/記号の強制ルールは設けない。</td></tr>
+          <tr><td>パスワード入力</td><td>入力補助</td><td>パスワード表示切替、ペースト、パスワードマネージャ利用を妨げない。</td></tr>
+          <tr><td>漏洩対策</td><td>弱いパスワード対策</td><td>可能なら認証基盤の漏洩パスワード検知/ブロックリスト機能を利用する。</td></tr>
+          <tr><td>ログイン失敗</td><td>レート制限</td><td>連続失敗時は認証基盤の制限を利用し、アプリ側では汎用エラーを表示する。</td></tr>
+          <tr><td>エラー表示</td><td>アカウント列挙防止</td><td>「メールまたはパスワードが正しくありません」のような汎用文言にする。</td></tr>
+          <tr><td>セッション</td><td>安全な保存</td><td>トークンはOSの安全領域/認証SDKに任せる。平文保存しない。</td></tr>
+          <tr><td>ログアウト</td><td>セッション破棄</td><td>ログアウト時はローカルセッションを破棄し、A01へ遷移する。</td></tr>
+          <tr><td>重要操作</td><td>再認証</td><td>アカウント削除、メール変更、パスワード変更は再認証を要求する。</td></tr>
+          <tr><td>通信</td><td>HTTPS必須</td><td>認証情報やトークンは保護された通信経路でのみ扱う。</td></tr>
+        </tbody>
+      </table>
+      <div class="callout orange">
+        パスワードハッシュやソルト管理は、独自実装ではなく認証基盤に任せる。自前認証を選ぶ場合は、NIST/OWASPに沿った別途詳細設計が必要。
+      </div>
+    </section>
+
+    <section id="deletion">
+      <h2>9. アカウント削除</h2>
+      <p>アプリ内でアカウントを作成できる場合、アプリ内からアカウント削除を開始できるようにする。</p>
+      <table>
+        <thead><tr><th>項目</th><th>仕様</th></tr></thead>
+        <tbody>
+          <tr><td>入口</td><td>A05 アカウント設定 → アカウント削除</td></tr>
+          <tr><td>確認</td><td>「削除」などの確認入力 + 再認証</td></tr>
+          <tr><td>削除対象</td><td>UserProfile、HomeMember、HomeSpaceに紐づく部屋/収納/エリア/アイテム/カテゴリ/人物ラベル</td></tr>
+          <tr><td>保持対象</td><td>法令・不正対策・課金処理等で保持が必要なログがある場合は、別途プライバシーポリシーに明記</td></tr>
+          <tr><td>完了後</td><td>セッション破棄 → A01ログイン画面へ遷移</td></tr>
+          <tr><td>Web導線</td><td>Google Play配信時は、アプリ外から削除申請できるWebリンクも用意する</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="implementation">
+      <h2>10. 実装方針</h2>
+      <div class="grid">
+        <div class="card span-6">
+          <h3>推奨</h3>
+          <ul>
+            <li>Firebase Authentication / Supabase Auth / Auth0 / Amazon Cognito等を利用</li>
+            <li>メール/パスワードをMVPにする</li>
+            <li>SDK標準のトークン管理を使う</li>
+            <li>アプリ側DBは <span class="kbd">auth_user_id</span> と <span class="kbd">home_id</span> で紐づける</li>
+          </ul>
+        </div>
+        <div class="card span-6">
+          <h3>非推奨</h3>
+          <ul>
+            <li>独自でパスワードDBを作る</li>
+            <li>パスワードをアプリ内に保存する</li>
+            <li>認証エラーで「メールが存在しません」と明示する</li>
+            <li>周期的なパスワード変更を強制する</li>
+          </ul>
+        </div>
+      </div>
+      <h3>既存仕様書への影響</h3>
+      <table>
+        <thead><tr><th>仕様書</th><th>影響</th></tr></thead>
+        <tbody>
+          <tr><td>01_検索/アイテム一覧</td><td>未ログイン時は表示しない。ログイン済みの場合のみS01へ。</td></tr>
+          <tr><td>04_全体画面遷移・管理設定</td><td>M01 管理/設定に「アカウント設定」を追加する。</td></tr>
+          <tr><td>02_アイテム登録</td><td>保存データはcurrent_home_idに紐づく。</td></tr>
+          <tr><td>03_部屋・収納・エリア編集</td><td>部屋/収納/エリアはcurrent_home_idに紐づく。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="specids">
+      <h2>11. 仕様ID</h2>
+      <table>
+        <thead><tr><th>ID</th><th>仕様</th></tr></thead>
+        <tbody>
+          <tr><td>AU-001</td><td>アプリ起動時に認証状態を確認し、ログイン済みならS01、未ログインならA01へ遷移する。</td></tr>
+          <tr><td>AU-002</td><td>MVPの認証方式はメールアドレス + パスワードとする。</td></tr>
+          <tr><td>AU-003</td><td>新規登録時、UserProfileと初期HomeSpaceを作成する。</td></tr>
+          <tr><td>AU-004</td><td>ログイン失敗時はアカウント存在有無を推測できない汎用エラーを表示する。</td></tr>
+          <tr><td>AU-005</td><td>パスワード再設定はメール送信方式とし、送信後もアカウント存在有無を明示しない。</td></tr>
+          <tr><td>AU-006</td><td>ログアウト時はローカルセッションを破棄し、A01へ遷移する。</td></tr>
+          <tr><td>AU-007</td><td>アカウント削除はA05から開始し、A06で確認入力と再認証を行う。</td></tr>
+          <tr><td>AU-008</td><td>アカウント削除後は関連するユーザーデータを削除し、セッションを破棄する。</td></tr>
+          <tr><td>AU-009</td><td>パスワードの文字種強制ルールは設けず、長さと推測困難性を重視する。</td></tr>
+          <tr><td>AU-010</td><td>M01 管理/設定にアカウント設定への導線を追加する。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="todo">
+      <h2>12. TBD / 次回検討</h2>
+      <div class="grid">
+        <div class="card span-6">
+          <h3>MVP前に決める</h3>
+          <ul>
+            <li>採用する認証基盤</li>
+            <li>メール確認を必須にするか、バナー案内にするか</li>
+            <li>アカウント削除時の物理削除/論理削除方針</li>
+            <li>Google Play向け削除申請Webページの用意</li>
+          </ul>
+        </div>
+        <div class="card span-6">
+          <h3>Phase 2で検討</h3>
+          <ul>
+            <li>SNSログイン</li>
+            <li>MFA</li>
+            <li>生体認証ロック</li>
+            <li>家族招待/権限管理</li>
+            <li>端末一覧/遠隔ログアウト</li>
+          </ul>
+        </div>
+      </div>
+      <h3>参考にした主な外部ガイド</h3>
+      <ul class="ref-list">
+        <li>OWASP Authentication Cheat Sheet</li>
+        <li>OWASP Session Management Cheat Sheet</li>
+        <li>NIST SP 800-63B Digital Identity Guidelines</li>
+        <li>Apple: Offering account deletion in your app</li>
+        <li>Google Play: App account deletion requirements</li>
+        <li>Firebase Authentication documentation</li>
+      </ul>
+    </section>
+  </main>
+</div>
+</body>
+</html>

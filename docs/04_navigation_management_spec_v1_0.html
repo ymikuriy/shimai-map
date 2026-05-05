@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>04_全体画面遷移・管理設定仕様書_v1.0</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;--paper:#fff;--ink:#1f2937;--muted:#6b7280;--line:#d9dee8;
+      --primary:#2563eb;--primary-soft:#e8f0ff;--green:#059669;--green-soft:#e8f8f1;
+      --orange:#d97706;--orange-soft:#fff4df;--red:#dc2626;--red-soft:#fee2e2;
+      --purple:#7c3aed;--purple-soft:#f0e8ff;--shadow:0 12px 30px rgba(31,41,55,.08);--radius:18px;
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;color:var(--ink);background:linear-gradient(180deg,#edf3ff 0%,var(--bg) 320px);line-height:1.7}
+    .layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:24px;max-width:1420px;margin:0 auto;padding:24px}
+    aside{position:sticky;top:24px;align-self:start;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    aside h2{font-size:14px;margin:0 0 12px;color:var(--muted);letter-spacing:.08em}aside a{display:block;text-decoration:none;color:var(--ink);padding:9px 10px;border-radius:10px;font-size:14px}aside a:hover{background:var(--primary-soft);color:var(--primary)}
+    main{min-width:0}.hero{background:linear-gradient(135deg,#fff 0%,#f4f7ff 100%);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);padding:32px;margin-bottom:24px}.hero h1{font-size:clamp(28px,4vw,42px);line-height:1.18;margin:8px 0 14px;letter-spacing:-.03em}.subtitle{color:var(--muted);font-size:16px;max-width:900px}.meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:6px 10px;border-radius:999px;font-size:13px;white-space:nowrap}.pill.primary{background:var(--primary-soft);color:var(--primary);border-color:#bad0ff}.pill.green{background:var(--green-soft);color:var(--green);border-color:#b7ead5}.pill.orange{background:var(--orange-soft);color:var(--orange);border-color:#ffdca1}.pill.purple{background:var(--purple-soft);color:var(--purple);border-color:#dcc8ff}.pill.red{background:var(--red-soft);color:var(--red);border-color:#fecaca}
+    section{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:22px}h2{font-size:24px;margin:0 0 16px;letter-spacing:-.02em}h3{font-size:18px;margin:22px 0 10px}p{margin:8px 0}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-6{grid-column:span 6}.span-8{grid-column:span 8}.span-12{grid-column:span 12}.callout{border-left:5px solid var(--primary);background:var(--primary-soft);border-radius:14px;padding:14px 16px;margin:14px 0}.callout.orange{border-left-color:var(--orange);background:var(--orange-soft)}.callout.green{border-left-color:var(--green);background:var(--green-soft)}.callout.red{border-left-color:var(--red);background:var(--red-soft)}
+    table{width:100%;border-collapse:collapse;margin-top:12px;background:#fff;border-radius:14px;overflow:hidden}th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;font-size:14px}th{background:#f8fafc;font-weight:800}.flow{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;margin-top:14px}.flow-step{flex:1 1 170px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;min-height:108px;position:relative}.flow-step:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:38%;color:var(--primary);font-weight:800;background:#fff;border:1px solid var(--line);border-radius:999px;width:28px;height:28px;text-align:center;line-height:25px;z-index:2}.step-id{display:inline-block;font-weight:800;color:var(--primary);background:var(--primary-soft);border-radius:999px;padding:2px 8px;font-size:12px;margin-bottom:8px}
+    .wireframes{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:18px;align-items:start}.wireframes.two{grid-template-columns:repeat(2,minmax(280px,1fr))}.phone{width:100%;max-width:360px;margin:0 auto;background:#111827;border-radius:32px;padding:11px;box-shadow:0 18px 34px rgba(17,24,39,.18)}.screen{background:#f9fafb;border-radius:24px;min-height:640px;padding:18px;overflow:hidden}.screen.short{min-height:560px}.topbar{min-height:34px;display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:14px;margin-bottom:12px}.top-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.actions{display:flex;gap:8px;align-items:center}.icon-btn{width:32px;height:32px;border-radius:999px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:900;font-size:15px}.text-btn{min-height:30px;border-radius:999px;background:var(--primary);color:#fff;padding:5px 11px;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center}.back{color:var(--primary);font-size:13px;font-weight:900}.save-link{color:var(--primary);font-size:13px;font-weight:900}.searchbox{height:44px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:0 12px;display:flex;align-items:center;gap:9px;color:#64748b;font-size:13px;margin-bottom:10px}.section-label{font-size:12px;font-weight:900;color:#475569;margin:12px 0 7px}.chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.chip{border:1px solid #dbeafe;background:#eef6ff;color:#2563eb;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;line-height:1.2}.chip.gray{background:#fff;color:#64748b;border-color:#e2e8f0}.count-line{font-size:12px;color:#64748b;font-weight:800;display:flex;justify-content:space-between;align-items:center;margin:7px 0 8px}.item-card{min-height:68px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 11px;display:grid;grid-template-columns:42px minmax(0,1fr);gap:10px;align-items:center;margin-bottom:8px;box-shadow:0 4px 10px rgba(31,41,55,.03)}.thumb{width:42px;height:42px;border-radius:12px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:18px}.item-main{min-width:0}.item-title-line{display:flex;align-items:center;gap:6px;min-width:0}.item-title{font-weight:900;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.match-badge{font-size:9px;font-weight:900;color:#64748b;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;padding:1px 5px;white-space:nowrap}.path{font-size:11px;color:#64748b;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}.empty-box{border:1px dashed #cbd5e1;background:#f8fafc;color:#64748b;border-radius:16px;padding:18px;text-align:center;font-size:12px;font-weight:800;margin-top:10px}.primary-button,.ghost-button{border-radius:14px;min-height:38px;padding:9px 12px;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;text-align:center}.primary-button{background:var(--primary);color:#fff}.ghost-button{background:#fff;color:var(--ink);border:1px solid var(--line)}.full{width:100%}.menu-list{display:grid;gap:10px}.menu-row{min-height:64px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:center;box-shadow:0 4px 10px rgba(31,41,55,.03)}.menu-icon{width:38px;height:38px;border-radius:12px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:900}.menu-row.green .menu-icon{background:var(--green-soft);color:var(--green)}.menu-row.orange .menu-icon{background:var(--orange-soft);color:var(--orange)}.menu-title{font-size:13px;font-weight:900}.menu-desc{font-size:10px;color:#64748b;font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chev{color:#94a3b8;font-weight:900}.danger-row{background:#fff7f7;border-color:#fecaca}.list-row{min-height:56px;background:#fff;border:1px solid var(--line);border-radius:15px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.row-title{font-size:13px;font-weight:900}.row-sub{font-size:10px;color:#64748b;font-weight:700;margin-top:1px}.status-text{font-size:10px;color:#64748b;font-weight:800;white-space:nowrap}.path-pill{height:28px;border-radius:999px;background:#fff;border:1px solid #e2e8f0;color:#64748b;font-size:10px;font-weight:900;display:flex;align-items:center;padding:0 10px;margin:-2px 0 10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.form-block{margin-bottom:12px}.field{width:100%;min-height:44px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px}.label{font-size:12px;font-weight:900;color:#475569;margin-bottom:5px}.small-note{font-size:11px;color:#64748b;font-weight:700}.tag-row{display:flex;gap:6px;flex-wrap:wrap}.tag{display:inline-flex;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;line-height:1}.tag.add{color:var(--primary);background:var(--primary-soft);border-color:#bad0ff}.tag.person{color:var(--purple);background:var(--purple-soft);border-color:#dcc8ff}.tag.category{color:var(--green);background:var(--green-soft);border-color:#b7ead5}.route-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px}.route-title{font-weight:900;font-size:13px;color:var(--primary);margin-bottom:6px}.route-line{font-size:12px;color:#475569;font-weight:700;margin:2px 0}.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:1px 5px;color:#475569}.impact-list{display:grid;gap:8px}.impact{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff}.impact strong{font-size:12px;color:var(--primary)}.impact span{font-size:12px;color:#475569}
+    @media(max-width:1050px){.layout{grid-template-columns:1fr}aside{position:static}.wireframes,.wireframes.two{grid-template-columns:repeat(2,minmax(280px,1fr))}.span-3,.span-4,.span-6,.span-8{grid-column:span 12}}
+    @media(max-width:720px){.layout{padding:14px}.hero,section{padding:18px}.wireframes,.wireframes.two{grid-template-columns:1fr}.flow-step:not(:last-child)::after{display:none}.impact{grid-template-columns:1fr}.screen{min-height:620px}.phone{max-width:350px}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <h2>目次</h2>
+    <a href="#overview">1. 概要</a>
+    <a href="#policy">2. 基本方針</a>
+    <a href="#screens">3. 画面一覧</a>
+    <a href="#main">4. メイン画面</a>
+    <a href="#settings">5. 管理画面</a>
+    <a href="#routes">6. 入口と戻り先</a>
+    <a href="#rules">7. 共通ルール</a>
+    <a href="#specids">8. 仕様ID</a>
+    <a href="#todo">9. TBD</a>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="pill primary">04 / Draft</div>
+      <h1>全体画面遷移・管理設定仕様書</h1>
+      <p class="subtitle">検索をアプリの主画面とし、下部タブは設けず、右上のアイテム追加・設定アイコンから登録/管理系へ遷移する方針を定義する。</p>
+      <div class="meta-row">
+        <span class="pill primary">メイン：検索/アイテム一覧</span>
+        <span class="pill green">右上：＋ アイテム追加</span>
+        <span class="pill orange">右上：設定アイコン</span>
+        <span class="pill purple">下部タブなし</span>
+      </div>
+    </div>
+
+    <section id="overview">
+      <h2>1. 概要</h2>
+      <p>本仕様書では、アプリ全体の画面入口、管理画面、主要な戻り先を整理する。</p>
+      <div class="callout">
+        <strong>結論：</strong>下部タブは作らない。アプリ起動時は「検索/アイテム一覧」を表示し、管理系は右上の設定アイコンから入る。
+      </div>
+      <div class="grid">
+        <div class="card span-4"><strong>主目的</strong><br>モノを検索して所在を確認する。</div>
+        <div class="card span-4"><strong>日常導線</strong><br>検索 → アイテム選択 → 位置表示。</div>
+        <div class="card span-4"><strong>管理導線</strong><br>設定アイコン → 管理画面 → 部屋/人物/カテゴリ/アカウント管理。</div>
+      </div>
+    </section>
+
+    <section id="policy">
+      <h2>2. 基本方針</h2>
+      <table>
+        <thead><tr><th>項目</th><th>方針</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>下部タブ</td><td>作らない</td><td>検索が主目的であり、管理機能を常時見せる必要が低いため。</td></tr>
+          <tr><td>検索/アイテム一覧</td><td>1画面に統合</td><td>検索前は全アイテム一覧、検索後は絞り込み一覧にするのが自然。</td></tr>
+          <tr><td>アイテム追加</td><td>メイン画面右上の「＋」から遷移</td><td>検索中に登録したいケースが多く、入口を明確にできる。</td></tr>
+          <tr><td>管理/設定</td><td>メイン画面右上の設定アイコンから遷移</td><td>部屋・収納・ラベル・カテゴリ・アカウントは初期設定/メンテナンス寄りのため。</td></tr>
+          <tr><td>収納管理</td><td>独立メニューにはしない</td><td>収納は部屋に所属するため、部屋管理から編集する。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="screens">
+      <h2>3. 画面一覧</h2>
+      <table>
+        <thead><tr><th>画面ID</th><th>画面名</th><th>役割</th><th>入口</th></tr></thead>
+        <tbody>
+          <tr><td>M00</td><td>検索/アイテム一覧</td><td>アイテム一覧表示、検索、アイテム追加、管理画面への入口</td><td>アプリ起動時</td></tr>
+          <tr><td>S03</td><td>位置表示</td><td>選択したアイテムの所在を表示</td><td>M00のアイテムカード</td></tr>
+          <tr><td>I01</td><td>アイテム登録/編集</td><td>アイテムの新規登録・編集</td><td>M00の＋、0件時登録、S03の編集</td></tr>
+          <tr><td>M01</td><td>管理/設定</td><td>管理系画面へのメニュー</td><td>M00右上の設定アイコン</td></tr>
+          <tr><td>M02</td><td>部屋管理</td><td>部屋一覧、部屋追加、部屋編集への入口</td><td>M01の部屋管理</td></tr>
+          <tr><td>R01</td><td>部屋登録/編集</td><td>部屋名、メモ、部屋レイアウト、収納リストを管理</td><td>M02の追加/部屋選択</td></tr>
+          <tr><td>R02</td><td>部屋レイアウト編集</td><td>部屋形状、収納、目印を編集</td><td>R01のレイアウト編集アイコン</td></tr>
+          <tr><td>R03</td><td>収納レイアウト編集</td><td>収納内エリアを編集</td><td>R02の収納レイアウトボタン</td></tr>
+          <tr><td>M03</td><td>人物ラベル管理</td><td>人物ラベルの一覧・追加・編集</td><td>M01の人物ラベル管理</td></tr>
+          <tr><td>M04</td><td>カテゴリ管理</td><td>カテゴリの一覧・追加・編集</td><td>M01のカテゴリ管理</td></tr>
+          <tr><td>M05</td><td>アカウント設定</td><td>メールアドレス、ログアウト、アカウント削除</td><td>M01のアカウント設定</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="main">
+      <h2>4. メイン画面</h2>
+      <div class="wireframes">
+        <div class="phone"><div class="screen">
+          <div class="topbar"><div class="top-title">検索</div><div class="actions"><div class="icon-btn">＋</div><div class="icon-btn">⚙</div></div></div>
+          <div class="searchbox">🔍 アイテム名・カテゴリ・人物で検索</div>
+          <div class="section-label">最近の検索</div>
+          <div class="chip-row"><span class="chip">レインコート</span><span class="chip">パスポート</span><span class="chip">保険証書</span></div>
+          <div class="count-line"><span>アイテム一覧 128件</span><span>最新順</span></div>
+          <div class="item-card"><div class="thumb">☂</div><div class="item-main"><div class="item-title-line"><span class="item-title">レインコート</span></div><div class="path">玄関 ＞ 玄関収納1 ＞ エリア2</div></div></div>
+          <div class="item-card"><div class="thumb">📘</div><div class="item-main"><div class="item-title-line"><span class="item-title">パスポート</span></div><div class="path">寝室 ＞ 書類棚 ＞ エリア1</div></div></div>
+          <div class="item-card"><div class="thumb">📄</div><div class="item-main"><div class="item-title-line"><span class="item-title">保険証書</span></div><div class="path">リビング ＞ キャビネット</div></div></div>
+          <div class="item-card"><div class="thumb">👕</div><div class="item-main"><div class="item-title-line"><span class="item-title">夏物の服</span></div><div class="path">子ども部屋 ＞ クローゼット ＞ 上段</div></div></div>
+        </div></div>
+        <div class="phone"><div class="screen">
+          <div class="topbar"><div class="top-title">検索</div><div class="actions"><div class="icon-btn">＋</div><div class="icon-btn">⚙</div></div></div>
+          <div class="searchbox">レインコート</div>
+          <div class="count-line"><span>検索結果 3件</span><span>クリア</span></div>
+          <div class="item-card"><div class="thumb">☂</div><div class="item-main"><div class="item-title-line"><span class="item-title">レインコート</span></div><div class="path">玄関 ＞ 玄関収納1 ＞ エリア2</div></div></div>
+          <div class="item-card"><div class="thumb">☔</div><div class="item-main"><div class="item-title-line"><span class="item-title">子ども用レインコート</span><span class="match-badge">部分一致</span></div><div class="path">子ども部屋 ＞ クローゼット</div></div></div>
+          <div class="item-card"><div class="thumb">🌧</div><div class="item-main"><div class="item-title-line"><span class="item-title">雨具セット</span><span class="match-badge">関連語で一致</span></div><div class="path">玄関 ＞ 玄関収納1</div></div></div>
+        </div></div>
+        <div class="phone"><div class="screen">
+          <div class="topbar"><div class="top-title">検索</div><div class="actions"><div class="icon-btn">＋</div><div class="icon-btn">⚙</div></div></div>
+          <div class="searchbox">キャンプ椅子</div>
+          <div class="count-line"><span>検索結果 0件</span><span>クリア</span></div>
+          <div class="empty-box">該当するアイテムが見つかりません<br><span class="small-note">別の言葉で検索するか、新規登録してください。</span></div>
+          <div style="height:12px"></div>
+          <div class="primary-button full">アイテムを登録する</div>
+          <div style="height:10px"></div>
+          <div class="ghost-button full">全アイテム一覧に戻る</div>
+        </div></div>
+      </div>
+      <div class="callout green">
+        <strong>M00のポイント：</strong>検索前は全アイテム一覧を表示する。検索キーワードを実行すると、同じリスト領域が検索結果に切り替わる。
+      </div>
+    </section>
+
+    <section id="settings">
+      <h2>5. 管理/設定画面</h2>
+      <div class="wireframes">
+        <div class="phone"><div class="screen short">
+          <div class="topbar"><div class="back">戻る</div><div class="top-title">管理/設定</div><div></div></div>
+          <div class="menu-list">
+            <div class="menu-row"><div class="menu-icon">部</div><div><div class="menu-title">部屋管理</div><div class="menu-desc">部屋一覧、部屋登録、部屋レイアウト編集</div></div><div class="chev">›</div></div>
+            <div class="menu-row green"><div class="menu-icon">人</div><div><div class="menu-title">人物ラベル管理</div><div class="menu-desc">パパ、ママ、花子などのラベル管理</div></div><div class="chev">›</div></div>
+            <div class="menu-row orange"><div class="menu-icon">カ</div><div><div class="menu-title">カテゴリ管理</div><div class="menu-desc">衣類、書類、雨具などのカテゴリ管理</div></div><div class="chev">›</div></div>
+            <div class="menu-row"><div class="menu-icon">ア</div><div><div class="menu-title">アカウント設定</div><div class="menu-desc">ログアウト、メールアドレス、アカウント削除</div></div><div class="chev">›</div></div>
+          </div>
+        </div></div>
+        <div class="phone"><div class="screen short">
+          <div class="topbar"><div class="back">戻る</div><div class="top-title">部屋管理</div><div class="text-btn">追加</div></div>
+          <div class="list-row"><div><div class="row-title">玄関</div><div class="row-sub">収納3件 / アイテム18件</div></div><div class="chev">›</div></div>
+          <div class="list-row"><div><div class="row-title">リビング</div><div class="row-sub">収納5件 / アイテム42件</div></div><div class="chev">›</div></div>
+          <div class="list-row"><div><div class="row-title">寝室</div><div class="row-sub">収納2件 / アイテム21件</div></div><div class="chev">›</div></div>
+          <div class="list-row"><div><div class="row-title">子ども部屋</div><div class="row-sub">収納4件 / アイテム47件</div></div><div class="chev">›</div></div>
+        </div></div>
+        <div class="phone"><div class="screen short">
+          <div class="topbar"><div class="back">戻る</div><div class="top-title">人物ラベル管理</div><div class="text-btn">追加</div></div>
+          <div class="tag-row"><span class="tag person">パパ</span><span class="tag person">ママ</span><span class="tag person">花子</span><span class="tag person">家族共用</span></div>
+          <div class="section-label">登録済みラベル</div>
+          <div class="list-row"><div><div class="row-title">パパ</div><div class="row-sub">アイテム12件</div></div><div class="chev">›</div></div>
+          <div class="list-row"><div><div class="row-title">ママ</div><div class="row-sub">アイテム23件</div></div><div class="chev">›</div></div>
+          <div class="list-row"><div><div class="row-title">花子</div><div class="row-sub">アイテム31件</div></div><div class="chev">›</div></div>
+        </div></div>
+      </div>
+      <div style="height:18px"></div>
+      <div class="wireframes two">
+        <div class="phone"><div class="screen short">
+          <div class="topbar"><div class="back">戻る</div><div class="top-title">カテゴリ管理</div><div class="text-btn">追加</div></div>
+          <div class="section-label">初期カテゴリ + ユーザー追加カテゴリ</div>
+          <div class="tag-row"><span class="tag category">衣類</span><span class="tag category">書類</span><span class="tag category">雨具</span><span class="tag category">薬</span><span class="tag category">工具</span></div>
+          <div class="list-row"><div><div class="row-title">雨具</div><div class="row-sub">アイテム5件 / AI候補対象</div></div><div class="chev">›</div></div>
+          <div class="list-row"><div><div class="row-title">書類</div><div class="row-sub">アイテム14件 / 初期カテゴリ</div></div><div class="chev">›</div></div>
+          <div class="list-row"><div><div class="row-title">季節用品</div><div class="row-sub">アイテム8件 / ユーザー追加</div></div><div class="chev">›</div></div>
+        </div></div>
+        <div class="phone"><div class="screen short">
+          <div class="topbar"><div class="back">戻る</div><div class="top-title">アカウント設定</div><div></div></div>
+          <div class="section-label">ログイン情報</div>
+          <div class="list-row"><div><div class="row-title">メールアドレス</div><div class="row-sub">user@example.com</div></div></div>
+          <div class="list-row"><div><div class="row-title">パスワード再設定</div><div class="row-sub">登録メールへ再設定リンクを送信</div></div><div class="chev">›</div></div>
+          <div class="section-label">アカウント操作</div>
+          <div class="list-row"><div><div class="row-title">ログアウト</div><div class="row-sub">この端末からログアウト</div></div><div class="chev">›</div></div>
+          <div class="list-row danger-row"><div><div class="row-title">アカウント削除</div><div class="row-sub">データ削除を確認して実行</div></div><div class="chev">›</div></div>
+        </div></div>
+      </div>
+    </section>
+
+    <section id="routes">
+      <h2>6. 入口と戻り先</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="step-id">通常利用</span><br>アプリ起動<br>↓<br>M00 検索/一覧<br>↓<br>S03 位置表示</div>
+        <div class="flow-step"><span class="step-id">アイテム追加</span><br>M00 右上＋<br>または0件時登録<br>↓<br>I01 登録</div>
+        <div class="flow-step"><span class="step-id">管理</span><br>M00 設定アイコン<br>↓<br>M01 管理/設定<br>↓<br>部屋/ラベル/カテゴリ/アカウント</div>
+        <div class="flow-step"><span class="step-id">レイアウト</span><br>M02 部屋管理<br>↓<br>R01 部屋編集<br>↓<br>R02/R03 編集</div>
+      </div>
+      <table>
+        <thead><tr><th>操作</th><th>入口</th><th>保存後</th><th>キャンセル/戻る</th></tr></thead>
+        <tbody>
+          <tr><td>アイテム新規登録</td><td>M00 右上＋</td><td>S03 位置表示へ遷移し、登録結果を確認</td><td>M00へ戻る</td></tr>
+          <tr><td>0件からアイテム登録</td><td>M00 検索結果0件の「アイテムを登録する」</td><td>S03 位置表示へ遷移し、登録結果を確認</td><td>0件画面へ戻る</td></tr>
+          <tr><td>アイテム編集</td><td>S03 右上編集</td><td>S03へ戻り、更新後の所在を表示</td><td>S03へ戻る</td></tr>
+          <tr><td>部屋追加</td><td>M02 右上追加</td><td>M02 部屋管理へ戻る</td><td>M02へ戻る</td></tr>
+          <tr><td>部屋編集</td><td>M02 部屋行タップ</td><td>M02 部屋管理へ戻る</td><td>M02へ戻る</td></tr>
+          <tr><td>部屋レイアウト編集</td><td>R01 レイアウト編集アイコン</td><td>R01 部屋登録/編集へ戻る</td><td>R01へ戻る</td></tr>
+          <tr><td>収納レイアウト編集</td><td>R02 選択中収納の「収納レイアウト」</td><td>R02 部屋レイアウト編集へ戻る</td><td>R02へ戻る</td></tr>
+          <tr><td>エリアからアイテム追加</td><td>R03 選択中エリアの「アイテム追加」</td><td>R03へ戻る。追加したアイテム件数を更新</td><td>R03へ戻る</td></tr>
+          <tr><td>人物ラベル追加/編集</td><td>M03</td><td>M03へ戻る</td><td>M03へ戻る</td></tr>
+          <tr><td>カテゴリ追加/編集</td><td>M04</td><td>M04へ戻る</td><td>M04へ戻る</td></tr>
+        </tbody>
+      </table>
+      <div class="callout orange">
+        <strong>補足：</strong>「保存後の戻り先」は呼び出し元の文脈に合わせる。検索文脈のアイテム追加は位置表示で確認、管理文脈の追加/編集は元の管理画面へ戻る。
+      </div>
+    </section>
+
+    <section id="rules">
+      <h2>7. 共通ルール</h2>
+      <div class="grid">
+        <div class="card span-6">
+          <h3>右上アイコン</h3>
+          <p><span class="kbd">＋</span> はアイテム追加専用。<span class="kbd">⚙</span> は管理/設定専用。検索画面の主役はあくまでアイテム検索/一覧とする。</p>
+        </div>
+        <div class="card span-6">
+          <h3>戻る/キャンセル</h3>
+          <p>未保存変更がある場合のみ確認ダイアログを表示する。未変更の場合は即時戻る。</p>
+        </div>
+        <div class="card span-6">
+          <h3>管理メニュー</h3>
+          <p>収納管理は独立メニューにしない。収納は部屋に所属するため、部屋管理内で扱う。</p>
+        </div>
+        <div class="card span-6">
+          <h3>スマホ設計書表示</h3>
+          <p>ワイヤーフレーム内の図・リスト・カードはスマホ枠からはみ出さない。横幅が狭い場合は折り返す。</p>
+        </div>
+      </div>
+      <h3>既存仕様書への影響</h3>
+      <div class="impact-list">
+        <div class="impact"><strong>01 検索仕様</strong><span>S01/S02を「検索/アイテム一覧画面」に統合する差分修正が必要。</span></div>
+        <div class="impact"><strong>02 アイテム登録</strong><span>保存後遷移のTBDを、本仕様の戻り先ルールに合わせて更新可能。</span></div>
+        <div class="impact"><strong>03 部屋/収納</strong><span>管理画面から部屋管理へ入り、R01/R02/R03へ遷移する導線として整理。</span></div>
+      </div>
+    </section>
+
+    <section id="specids">
+      <h2>8. 仕様ID一覧</h2>
+      <table>
+        <thead><tr><th>ID</th><th>仕様</th></tr></thead>
+        <tbody>
+          <tr><td>NV-001</td><td>下部タブは設けず、アプリ起動時はM00 検索/アイテム一覧を表示する。</td></tr>
+          <tr><td>NV-002</td><td>M00右上にアイテム追加用の「＋」と、管理/設定用の設定アイコンを配置する。</td></tr>
+          <tr><td>NV-003</td><td>検索前は全アイテム一覧、検索後は検索条件に合うアイテム一覧を同じ領域に表示する。</td></tr>
+          <tr><td>NV-004</td><td>管理/設定画面には、部屋管理、人物ラベル管理、カテゴリ管理、アカウント設定を表示する。</td></tr>
+          <tr><td>NV-005</td><td>収納管理は独立メニュー化せず、部屋管理内の部屋レイアウト/収納レイアウト導線で扱う。</td></tr>
+          <tr><td>NV-006</td><td>検索文脈でのアイテム追加保存後は、S03 位置表示へ遷移し登録結果を確認する。</td></tr>
+          <tr><td>NV-007</td><td>管理文脈での追加/編集保存後は、原則として呼び出し元の管理画面へ戻る。</td></tr>
+          <tr><td>NV-008</td><td>未保存変更がある状態で戻る場合のみ、確認ダイアログを表示する。</td></tr>
+          <tr><td>NV-009</td><td>設計書上のスマホワイヤーフレームは、図・リスト・カードがスマホ枠からはみ出さないようにする。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="todo">
+      <h2>9. TBD / 次回検討</h2>
+      <div class="callout red">
+        <strong>次に必要：</strong>01_検索・結果表示仕様書を「検索/アイテム一覧統合」版に差分修正する。
+      </div>
+      <table>
+        <thead><tr><th>項目</th><th>扱い</th></tr></thead>
+        <tbody>
+          <tr><td>人物ラベル管理の詳細CRUD</td><td>別途、簡易仕様として整理する。</td></tr>
+          <tr><td>カテゴリ管理の詳細CRUD</td><td>AI候補・ユーザー追加カテゴリとの関係を含め、別途整理する。</td></tr>
+          <tr><td>削除ルール</td><td>08_共通データルール仕様書_v1.0 に従う。</td></tr>
+          <tr><td>初回導線</td><td>部屋未登録時、M00に「部屋を登録する」案内を出すか検討。</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+</body>
+</html>
